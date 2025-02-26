@@ -1,0 +1,21 @@
+<html>
+
+<head>
+    <title>ComboDepot</title>
+    <meta property="og:title" content="Browse" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://broken.link" />
+    <meta property="og:description" content="Browse combos for Under Night In Birth!" />
+</head>
+
+<body>
+    <h1>Combo List</h1>
+    {{#each combos as |c| }}
+    <div>
+        <a href="/combo/{{c.id}}">
+            {{c.combo}}</a>
+    </div>
+    {{/each}}
+</body>
+
+</html>
