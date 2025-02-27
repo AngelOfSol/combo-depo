@@ -17,3 +17,24 @@ Character, position, damage, meter, video link
 ### Combo Page
 
 Display the combo text and the meta data
+
+
+## run dev
+
+cd ./app && npm run dev
+
+cd .. && cargo run
+
+## run prod
+
+cd ./app && npm run build
+
+cd .. && cargo run --release
+
+## TODO
+
+
+- [ ] create a how-to for running both dev and prod
+- [ ] create actual react pages for each element
+- [ ] hook up router so I don't need to create separate entry points for each page
+- [ ] allow combo submission
