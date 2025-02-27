@@ -1,5 +1,7 @@
 pub mod combo;
 pub mod store;
+pub mod vite;
+
 use std::{
     ops::Deref,
     sync::{Arc, Mutex},
@@ -39,9 +41,6 @@ pub struct Combo {
 async fn main() {
     // initialize tracing
     tracing_subscriber::fmt::init();
-    // #[cfg(debug_assertions)]
-    // Optional: start the dev server and stop it on SIGINT, SIGTERM or when this guard goes out of scope
-    // let _guard = Assets::start_dev_server(true);
 
     let mut reg = Handlebars::new();
 
@@ -64,12 +63,14 @@ async fn main() {
         let store = store.clone();
         get(async move || {
             let list = store.get_all().await;
+            let raw_json = serde_json::to_string_pretty(&list).unwrap();
 
             let result = reg
                 .render(
                     "home",
                     &json!({
-                        "combos": list
+                        "rawJson": raw_json,
+                        "combos": list,
                     }),
                 )
                 .unwrap();
@@ -94,21 +95,23 @@ async fn main() {
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
-        .route("/", home_route)
+        .route("/", home_route.clone())
+        .route("/alternative", home_route)
         .route("/create", get(root))
         .route("/combo/{key}", combo_route)
         .route(
             "/vite",
             get(|| async {
                 // let asset: vite_rs::ViteFile = Assets::get("index.html").unwrap();
-                // Html(String::from_utf8(asset.bytes).unwrap())
-                "BORKED"
+                // Html(String::from_utf8(asset.bytes.to_vec()).unwrap())
+                "borked"
             }),
         )
         .fallback(get(async |uri: Uri| {
-            println!("{:?}", &uri.path()[1..]);
+            // let path = &uri.path()[1..].replace("/", "\\");
+            // println!("{:?}", path);
 
-            // let asset: vite_rs::ViteFile = Assets::get(&uri.path()[1..]).unwrap();
+            // let asset: vite_rs::ViteFile = Assets::get(path).unwrap();
 
             // let response = Response::builder()
             //     .header(header::CONTENT_TYPE, asset.content_type)
@@ -116,7 +119,6 @@ async fn main() {
             //     .body(Body::from(asset.bytes));
 
             // response.unwrap()
-
             "NOT FOUND"
         }));
 
