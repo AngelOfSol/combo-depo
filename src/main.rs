@@ -3,7 +3,9 @@ pub mod store;
 pub mod vite;
 
 use std::{
+    fs::read_to_string,
     ops::Deref,
+    path::PathBuf,
     sync::{Arc, Mutex},
 };
 
@@ -11,13 +13,19 @@ use axum::{
     Json, Router,
     body::Body,
     extract::Path,
-    http::{Response, StatusCode, Uri, header},
+    http::{
+        Response, StatusCode, Uri,
+        header::{self, X_CONTENT_TYPE_OPTIONS},
+    },
     response::{Html, IntoResponse},
     routing::{get, post},
 };
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use tower_http::services::ServeDir;
+
+use crate::vite::VITE_DIR;
 
 #[derive(Serialize, Deserialize, Copy, Clone)]
 pub enum Position {
@@ -44,6 +52,8 @@ async fn main() {
 
     let mut reg = Handlebars::new();
 
+    let html_header = vite::vite_head_block(&reg);
+
     reg.register_template_file(
         "home",
         r"C:\Programming\Projects\combo_repo\templates\browse.hbs",
@@ -61,6 +71,7 @@ async fn main() {
     let home_route = {
         let reg = reg.clone();
         let store = store.clone();
+        let html_header = html_header.clone();
         get(async move || {
             let list = store.get_all().await;
             let raw_json = serde_json::to_string_pretty(&list).unwrap();
@@ -71,6 +82,7 @@ async fn main() {
                     &json!({
                         "rawJson": raw_json,
                         "combos": list,
+                        "htmlHeader": html_header,
                     }),
                 )
                 .unwrap();
@@ -81,10 +93,20 @@ async fn main() {
     let combo_route = {
         let reg = reg.clone();
         let store = store.clone();
+        let html_header = html_header.clone();
+
         get(async move |Path(combo_id)| {
             let item = store.get(combo_id).await;
             if let Some(item) = item {
-                let result = reg.render("combo", &item).unwrap();
+                let result = reg
+                    .render(
+                        "combo",
+                        &json!({
+                            "combo": item,
+                            "htmlHeader": html_header,
+                        }),
+                    )
+                    .unwrap();
                 Html(result).into_response()
             } else {
                 StatusCode::NOT_FOUND.into_response()
@@ -92,6 +114,7 @@ async fn main() {
         })
     };
 
+    let serve_dir = ServeDir::new("app/dist");
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
@@ -107,20 +130,7 @@ async fn main() {
                 "borked"
             }),
         )
-        .fallback(get(async |uri: Uri| {
-            // let path = &uri.path()[1..].replace("/", "\\");
-            // println!("{:?}", path);
-
-            // let asset: vite_rs::ViteFile = Assets::get(path).unwrap();
-
-            // let response = Response::builder()
-            //     .header(header::CONTENT_TYPE, asset.content_type)
-            //     .header(header::CONTENT_LENGTH, asset.content_length)
-            //     .body(Body::from(asset.bytes));
-
-            // response.unwrap()
-            "NOT FOUND"
-        }));
+        .fallback_service(serve_dir);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();

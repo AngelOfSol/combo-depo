@@ -7,7 +7,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   console.log(window.location);
-  console.log(window.rawJson);
+  // console.log(window.rawJson);
   return (
     <>
       <div>
@@ -24,7 +24,7 @@ function App() {
           count is {count}
         </button>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          Edit <code>src/App.tsx</code> and save to test HMR PLUS
         </p>
       </div>
       <p className="read-the-docs">
