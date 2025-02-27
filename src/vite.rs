@@ -18,9 +18,9 @@ window.__vite_plugin_react_preamble_installed__ = true
 
 const PRODUCTION: &str = r#"
 {{#each css}}
-<link rel="stylesheet" href="{{this}}" />
+<link rel="stylesheet" href="/{{this}}" />
 {{/each}}
-<script type="module" src="{{entry}}"></script>
+<script type="module" src="/{{entry}}"></script>
 "#;
 
 pub const VITE_DIR: &str = "./app/dist";
