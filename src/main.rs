@@ -1,3 +1,5 @@
+pub mod combo;
+pub mod store;
 use std::{
     ops::Deref,
     sync::{Arc, Mutex},
@@ -5,16 +7,17 @@ use std::{
 
 use axum::{
     Json, Router,
+    body::Body,
     extract::Path,
-    http::StatusCode,
-    response::{Html, IntoResponse, Response},
+    http::{Response, StatusCode, Uri, header},
+    response::{Html, IntoResponse},
     routing::{get, post},
 };
 use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Copy, Clone)]
 pub enum Position {
     Midscreen,
     CloseCorner,
@@ -22,7 +25,7 @@ pub enum Position {
     Anywhere,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Combo {
     combo: String,
     damage: i32,
@@ -36,6 +39,9 @@ pub struct Combo {
 async fn main() {
     // initialize tracing
     tracing_subscriber::fmt::init();
+    // #[cfg(debug_assertions)]
+    // Optional: start the dev server and stop it on SIGINT, SIGTERM or when this guard goes out of scope
+    // let _guard = Assets::start_dev_server(true);
 
     let mut reg = Handlebars::new();
 
@@ -51,21 +57,13 @@ async fn main() {
     .unwrap();
     let reg = reg;
 
-    let list: Arc<Mutex<Vec<Combo>>> = Arc::new(Mutex::new(vec![Combo {
-        combo: "2a 5b 5c".to_string(),
-        damage: 200,
-        meter: 8000,
-        position: Position::Midscreen,
-        video_link: "https://www.youtube.com/watch?v=upM0bNNvUWU".to_string(),
-        id: 10,
-    }]));
+    let store = store::start();
 
     let home_route = {
-        let list = list.clone();
         let reg = reg.clone();
-        get(move || async move {
-            let list = list.lock().unwrap();
-            let list = list.deref();
+        let store = store.clone();
+        get(async move || {
+            let list = store.get_all().await;
 
             let result = reg
                 .render(
@@ -80,16 +78,12 @@ async fn main() {
     };
 
     let combo_route = {
-        let list = list.clone();
         let reg = reg.clone();
-        get(move |Path(combo_id): Path<u32>| async move {
-            let list = list.lock().unwrap();
-            let list = list.deref();
-
-            let item = list.iter().find(|item| item.id == combo_id);
-
+        let store = store.clone();
+        get(async move |Path(combo_id)| {
+            let item = store.get(combo_id).await;
             if let Some(item) = item {
-                let result = reg.render("combo", item).unwrap();
+                let result = reg.render("combo", &item).unwrap();
                 Html(result).into_response()
             } else {
                 StatusCode::NOT_FOUND.into_response()
@@ -102,7 +96,29 @@ async fn main() {
         // `GET /` goes to `root`
         .route("/", home_route)
         .route("/create", get(root))
-        .route("/combo/{key}", combo_route);
+        .route("/combo/{key}", combo_route)
+        .route(
+            "/vite",
+            get(|| async {
+                // let asset: vite_rs::ViteFile = Assets::get("index.html").unwrap();
+                // Html(String::from_utf8(asset.bytes).unwrap())
+                "BORKED"
+            }),
+        )
+        .fallback(get(async |uri: Uri| {
+            println!("{:?}", &uri.path()[1..]);
+
+            // let asset: vite_rs::ViteFile = Assets::get(&uri.path()[1..]).unwrap();
+
+            // let response = Response::builder()
+            //     .header(header::CONTENT_TYPE, asset.content_type)
+            //     .header(header::CONTENT_LENGTH, asset.content_length)
+            //     .body(Body::from(asset.bytes));
+
+            // response.unwrap()
+
+            "NOT FOUND"
+        }));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
