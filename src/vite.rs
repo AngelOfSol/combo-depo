@@ -16,6 +16,13 @@ window.__vite_plugin_react_preamble_installed__ = true
 <script type="module" src="http://localhost:{{port}}/{{entry}}"></script>
 "#;
 
+const PRODUCTION: &str = r#"
+{{#each css}}
+<link rel="stylesheet" href="{{this}}" />
+{{/each}}
+<script type="module" src="{{entry}}"></script>
+"#;
+
 pub const VITE_DIR: &str = "./app/dist";
 
 const MANIFEST_PATH: &str = "./app/dist/.vite/manifest.json";
@@ -61,13 +68,10 @@ pub fn vite_head_block(reg: &Handlebars) -> String {
             let entry = &manifest[&import];
             recursive.extend(entry.imports.iter().cloned());
 
-            css.extend(entry.css.iter().map(format_stylesheet));
+            css.extend(entry.css.iter());
         }
 
-        let entry_point = format!(r#"<script type="module" src="{}"></script>"#, main.file);
-
-        let result = format!("{}\n{}", css.join("\n"), entry_point);
-
-        result
+        reg.render_template(PRODUCTION, &json!({ "entry": main.file, "css": css }))
+            .unwrap()
     }
 }
