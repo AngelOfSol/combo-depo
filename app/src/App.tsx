@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import './App.css';
 import Browse from './pages/Browse';
-import ComboElement from './pages/Combo';
+import ComboElement, { ColorModeToggle } from './pages/Combo';
 import Create from './pages/Create';
+import { Box } from '@chakra-ui/react';
 
 export type Combo = {
   combo: string,
@@ -18,6 +18,9 @@ function App() {
 
   return (
     <>
+      <Box hideBelow="md" pos="absolute" top="4" right="4">
+        <ColorModeToggle />
+      </Box>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
