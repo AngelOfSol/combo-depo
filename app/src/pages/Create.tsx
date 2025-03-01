@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Combo } from '../App';
+import { Combo } from '../typedefs/combo';
 
 
 

@@ -24,10 +24,12 @@ use handlebars::Handlebars;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tower_http::services::ServeDir;
+use ts_rs::TS;
 
 use crate::vite::VITE_DIR;
 
-#[derive(Serialize, Deserialize, Copy, Clone)]
+#[derive(Serialize, Deserialize, Copy, Clone, TS)]
+#[ts(export)]
 pub enum Position {
     Midscreen,
     CloseCorner,
@@ -35,7 +37,8 @@ pub enum Position {
     Anywhere,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 pub struct Combo {
     combo: String,
     damage: i32,
@@ -43,6 +46,7 @@ pub struct Combo {
     position: Position,
     video_link: String,
     id: u32,
+    grd: i32,
 }
 
 #[tokio::main]
@@ -51,12 +55,19 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     let mut reg = Handlebars::new();
+    #[cfg(debug_assertions)]
+    reg.set_dev_mode(true);
 
     let html_header = vite::vite_head_block(&reg);
 
     reg.register_template_file(
         "home",
         r"C:\Programming\Projects\combo_repo\templates\browse.hbs",
+    )
+    .unwrap();
+    reg.register_template_file(
+        "create",
+        r"C:\Programming\Projects\combo_repo\templates\create.hbs",
     )
     .unwrap();
     reg.register_template_file(
@@ -74,14 +85,12 @@ async fn main() {
         let html_header = html_header.clone();
         get(async move || {
             let list = store.get_all().await;
-            let raw_json = serde_json::to_string_pretty(&list).unwrap();
 
             let result = reg
                 .render(
                     "home",
                     &json!({
-                        "rawJson": raw_json,
-                        "combos": list,
+                        "rawJson": serde_json::to_string_pretty(&list).unwrap(),
                         "htmlHeader": html_header,
                     }),
                 )
@@ -102,7 +111,7 @@ async fn main() {
                     .render(
                         "combo",
                         &json!({
-                            "combo": item,
+                            "rawJson": serde_json::to_string_pretty(&item).unwrap(),
                             "htmlHeader": html_header,
                         }),
                     )
@@ -114,22 +123,31 @@ async fn main() {
         })
     };
 
+    let create_route = {
+        let reg = reg.clone();
+        let html_header = html_header.clone();
+        get(async move || {
+            let result = reg
+                .render(
+                    "create",
+                    &json!({
+                        "rawJson": "null",
+                        "htmlHeader": html_header,
+                    }),
+                )
+                .unwrap();
+            Html(result)
+        })
+    };
+
     let serve_dir = ServeDir::new("app/dist");
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", home_route.clone())
         .route("/alternative", home_route)
-        .route("/create", get(root))
+        .route("/create", create_route)
         .route("/combo/{key}", combo_route)
-        .route(
-            "/vite",
-            get(|| async {
-                // let asset: vite_rs::ViteFile = Assets::get("index.html").unwrap();
-                // Html(String::from_utf8(asset.bytes.to_vec()).unwrap())
-                "borked"
-            }),
-        )
         .fallback_service(serve_dir);
 
     // run our app with hyper, listening globally on port 3000

@@ -1,7 +1,7 @@
-import { Badge, Box, Button, Card, Center, Clipboard, Flex, Link, Stat, Tag, Text, Tooltip } from "@chakra-ui/react";
-import { Combo } from "../App";
-import { LuCheck, LuChevronRight, LuClipboard } from "react-icons/lu";
+import { Box, Card, Center, Clipboard, Flex, Link, Tag, Text, Tooltip } from "@chakra-ui/react";
+import { LuCheck, LuClipboard } from "react-icons/lu";
 import GameStat from "./GameStat";
+import { Combo } from "../typedefs/combo";
 
 type Props = { combo: Combo; };
 
@@ -22,7 +22,7 @@ function ComboCard({ combo }: Props) {
 
               <GameStat value={combo.damage} variant="damage" />
               <GameStat value={combo.meter} variant="meter" />
-              <GameStat value={1.5} variant="grd" />
+              <GameStat value={combo.grd} variant="grd" />
 
             </Flex>
           </Center>
@@ -38,7 +38,7 @@ function ComboCard({ combo }: Props) {
               <Tooltip.Trigger>
                 <Clipboard.Root value={`${window.location.protocol}//${window.location.host}/combo/${combo.id}`}>
                   <Clipboard.Control>
-                    <Clipboard.Trigger>
+                    <Clipboard.Trigger asChild>
                       <Clipboard.Indicator copied={<LuCheck size="24px" />}>
                         <LuClipboard size="24px" />
                       </Clipboard.Indicator>

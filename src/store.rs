@@ -37,14 +37,26 @@ pub fn start() -> StoreHandle {
     let (tx, mut rx) = mpsc::channel(10);
 
     tokio::spawn(async move {
-        let mut data = vec![Combo {
-            combo: "2a 5b 5c".to_string(),
-            damage: 200,
-            meter: 8000,
-            position: Position::Midscreen,
-            video_link: "https://www.youtube.com/watch?v=upM0bNNvUWU".to_string(),
-            id: 10,
-        }];
+        let mut data = vec![
+            Combo {
+                combo: "2a 5b 5c".to_string(),
+                damage: 200,
+                meter: 8000,
+                position: Position::Midscreen,
+                video_link: "https://www.youtube.com/watch?v=upM0bNNvUWU".to_string(),
+                id: 0,
+                grd: 150,
+            },
+            Combo {
+                combo: "5a 5b 5c 623a".to_string(),
+                damage: 200,
+                meter: 8000,
+                position: Position::CloseCorner,
+                video_link: "https://www.youtube.com/watch?v=upM0bNNvUWU".to_string(),
+                id: 1,
+                grd: -125,
+            },
+        ];
 
         while let Some(message) = rx.recv().await {
             match message {

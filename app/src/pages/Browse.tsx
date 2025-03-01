@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Combo } from '../App';
 import { Center, VStack } from '@chakra-ui/react';
 import ComboCard from '../components/ComboCard';
+import { Combo } from '../typedefs/combo';
 
 
 

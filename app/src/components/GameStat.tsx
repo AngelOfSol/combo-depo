@@ -19,7 +19,7 @@ function GameStat({ value, variant }: Props) {
   }[variant];
 
   const formattedValue = {
-    grd: (value > 0 ? "+" : "-") + value.toString(),
+    grd: (value > 0 ? "+" : "-") + Math.abs(value / 100).toString(),
     damage: value.toString(),
     meter: (value / 100).toFixed(2),
   }[variant];

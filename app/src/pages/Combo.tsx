@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Combo } from '../App';
 import { useParams } from 'react-router';
 import { Box, Button, Checkbox, Heading, HStack, Link, Progress, RadioGroup, VStack } from '@chakra-ui/react';
+import { Combo } from '../typedefs/combo';
 
 
 
@@ -85,19 +85,5 @@ function ComboElement() {
     </>
   );
 }
-import { IconButton } from "@chakra-ui/react";
-import { useTheme } from "next-themes";
-import { LuMoon, LuSun } from "react-icons/lu";
 
-export function ColorModeToggle() {
-  const { theme, setTheme } = useTheme();
-  const toggleColorMode = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-  return (
-    <IconButton aria-label="toggle color mode" onClick={toggleColorMode}>
-      {theme === "light" ? <LuMoon /> : <LuSun />}
-    </IconButton>
-  );
-}
 export default ComboElement;

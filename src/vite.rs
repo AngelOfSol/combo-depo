@@ -50,13 +50,12 @@ fn format_stylesheet(target: &String) -> String {
 pub fn vite_head_block(reg: &Handlebars) -> String {
     const ENTRY: &str = "src/main.tsx";
 
-    let manifest: HashMap<String, ManifestEntry> =
-        serde_json::from_reader(std::fs::File::open(MANIFEST_PATH).unwrap()).unwrap();
-
     if cfg!(debug_assertions) {
         reg.render_template(DEVELOPMENT, &json!({ "entry": ENTRY, "port": 5173 }))
             .unwrap()
     } else {
+        let manifest: HashMap<String, ManifestEntry> =
+            serde_json::from_reader(std::fs::File::open(MANIFEST_PATH).unwrap()).unwrap();
         let main = &manifest[ENTRY];
 
         let mut css = vec![];
