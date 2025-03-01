@@ -34,6 +34,7 @@ pub struct Combo {
     video_link: String,
     id: u32,
     grd: i32,
+    description: String,
 }
 
 #[tokio::main]

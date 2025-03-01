@@ -1,11 +1,66 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Box, Button, Checkbox, Heading, HStack, Link, Progress, RadioGroup, VStack } from '@chakra-ui/react';
+import { Box, Button, Card, Center, Checkbox, Flex, Heading, HStack, Link, Menu, Progress, RadioGroup, Tag, Text, VStack } from '@chakra-ui/react';
 import { Combo } from '../typedefs/combo';
+import GameStat from '../components/GameStat';
+import CopyCombo from '../components/CopyCombo';
 
 
+function ComboInner({ combo }: { combo: Combo; }) {
+  return (
+    <Flex flexDirection={{ base: "row", lgDown: "column" }} pt="20vh" gap={10} padding={8} flexWrap="wrap">
+      <Box flex={1} >
+        <Card.Root >
+          <Card.Body>
+            <Card.Title>
+              Game Information
+            </Card.Title>
+            <GameStat size='lg' value={combo.damage} variant='damage' />
+            <GameStat size='lg' value={combo.meter} variant='meter' />
+            <GameStat size='lg' value={combo.grd} variant='grd' />
+          </Card.Body>
+          <Card.Footer flexDirection="column" alignItems="flex-start">
+            <Heading>Tags</Heading>
+            <Tag.Root size="lg"><Tag.Label>{combo.position}</Tag.Label></Tag.Root>
+          </Card.Footer>
+        </Card.Root>
+      </Box>
+      <VStack gap="8" flex={4}>
+        <Box padding={8}>
+          <Text textStyle="5xl">{combo.combo}</Text>
+        </Box>
 
-function ComboElement() {
+        <Card.Root width="100%">
+          <Card.Body>
+            <Card.Title>Annotations</Card.Title>
+            <Card.Description>
+              {combo.description}
+            </Card.Description>
+          </Card.Body>
+        </Card.Root>
+      </VStack>
+
+      <Box flex={1}>
+        <Card.Root >
+          <Card.Body>
+            <Card.Title>
+              Metadata
+            </Card.Title>
+            <Card.Description>
+              <Link textStyle="2xl" href={combo.video_link}>Video</Link>
+            </Card.Description>
+          </Card.Body>
+          <Card.Footer flexDirection="column" alignItems="flex-start">
+            <CopyCombo expanded comboId={combo.id} />
+          </Card.Footer>
+        </Card.Root>
+      </Box>
+    </Flex>
+  );
+}
+
+
+function ComboPage() {
   const [combo, setCombo] = useState<Combo | null>(null);
   const id_param = useParams().id;
 
@@ -20,70 +75,9 @@ function ComboElement() {
 
   return (
     <>
-
-      <Box textAlign="center" fontSize="xl" pt="30vh">
-        <VStack gap="8">
-          <Heading size="2xl" letterSpacing="tight">
-            Welcome to Chakra UI v3 + Vite
-          </Heading>
-          <div>
-            <h1>My combo</h1>
-            {combo &&
-              <>
-                <p>{combo.combo}</p>
-                <p>Damage: {combo.damage}</p>
-                <p>Meter: {(combo.meter / 100).toFixed(2)}</p>
-                <p>Position: {combo.position}</p>
-                <Link target='_blank' href={combo.video_link}>Test Link</Link>
-                <Button>Test</Button>
-                <p>id: {combo.id}</p>
-
-              </>
-            }
-          </div>
-          <HStack gap="10">
-            <Checkbox.Root defaultChecked>
-              <Checkbox.HiddenInput />
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
-              <Checkbox.Label>Checkbox</Checkbox.Label>
-            </Checkbox.Root>
-
-            <RadioGroup.Root display="inline-flex" defaultValue="1">
-              <RadioGroup.Item value="1" mr="2">
-                <RadioGroup.ItemHiddenInput />
-                <RadioGroup.ItemControl>
-                  <RadioGroup.ItemIndicator />
-                </RadioGroup.ItemControl>
-                <RadioGroup.ItemText lineHeight="1">Radio</RadioGroup.ItemText>
-              </RadioGroup.Item>
-
-              <RadioGroup.Item value="2">
-                <RadioGroup.ItemHiddenInput />
-                <RadioGroup.ItemControl>
-                  <RadioGroup.ItemIndicator />
-                </RadioGroup.ItemControl>
-                <RadioGroup.ItemText lineHeight="1">Radio</RadioGroup.ItemText>
-              </RadioGroup.Item>
-            </RadioGroup.Root>
-          </HStack>
-
-          <Progress.Root width="300px" value={65} striped>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-
-          <HStack>
-            <Button>Let's go!</Button>
-            <Button variant="outline">bun install @chakra-ui/react</Button>
-          </HStack>
-        </VStack>
-
-      </Box>
+      {combo && <ComboInner combo={combo} />}
     </>
   );
 }
 
-export default ComboElement;
+export default ComboPage;

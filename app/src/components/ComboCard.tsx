@@ -2,6 +2,7 @@ import { Box, Card, Center, Clipboard, Flex, Link, Tag, Text, Tooltip } from "@c
 import { LuCheck, LuClipboard } from "react-icons/lu";
 import GameStat from "./GameStat";
 import { Combo } from "../typedefs/combo";
+import CopyCombo from "./CopyCombo";
 
 type Props = { combo: Combo; };
 
@@ -33,31 +34,7 @@ function ComboCard({ combo }: Props) {
           </Center>
         </Box>
         <Flex flex="1" justifyContent="flex-end">
-          <Box>
-            <Tooltip.Root openDelay={200} >
-              <Tooltip.Trigger>
-                <Clipboard.Root value={`${window.location.protocol}//${window.location.host}/combo/${combo.id}`}>
-                  <Clipboard.Control>
-                    <Clipboard.Trigger asChild>
-                      <Clipboard.Indicator copied={<LuCheck size="24px" />}>
-                        <LuClipboard size="24px" />
-                      </Clipboard.Indicator>
-                    </Clipboard.Trigger>
-                  </Clipboard.Control>
-                </Clipboard.Root>
-              </Tooltip.Trigger>
-              <Tooltip.Positioner>
-                <Tooltip.Content>
-                  <Tooltip.Arrow>
-                    <Tooltip.ArrowTip />
-                  </Tooltip.Arrow>
-                  <Text>
-                    Copy a link to this combo!
-                  </Text>
-                </Tooltip.Content>
-              </Tooltip.Positioner>
-            </Tooltip.Root>
-          </Box>
+          <CopyCombo comboId={combo.id} />
         </Flex>
       </Flex>
 
