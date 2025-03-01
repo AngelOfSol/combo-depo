@@ -1,5 +1,5 @@
 import { Box, Card, Center, Clipboard, Flex, Link, Tag, Text, Tooltip } from "@chakra-ui/react";
-import { LuCheck, LuClipboard } from "react-icons/lu";
+import { LuCheck, LuChevronRight, LuClipboard } from "react-icons/lu";
 import GameStat from "./GameStat";
 import { Combo } from "../typedefs/combo";
 import CopyCombo from "./CopyCombo";
@@ -33,8 +33,9 @@ function ComboCard({ combo }: Props) {
             <Link href={`/combo/${combo.id}`}>{combo.combo}</Link>
           </Center>
         </Box>
-        <Flex flex="1" justifyContent="flex-end">
-          <CopyCombo comboId={combo.id} />
+        <Flex flex="1" justifyContent="flex-end" gap={4}>
+          <CopyCombo combo={combo} />
+          <Link unstyled href={`/combo/${combo.id}`}><LuChevronRight size="24px" /></Link>
         </Flex>
       </Flex>
 

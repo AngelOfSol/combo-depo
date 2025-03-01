@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Browse from './pages/Browse';
-import ComboPage from './pages/Combo';
+import ComboPage from './pages/View';
 import Create from './pages/Create';
 import { Box, Flex } from '@chakra-ui/react';
 import AppHeader from './components/AppHeader';
@@ -11,9 +11,6 @@ function App() {
 
   return (
     <>
-      <Box hideBelow="md" pos="absolute" bottom="4" left="4">
-        <ColorModeToggle />
-      </Box>
 
 
       <BrowserRouter>
@@ -37,6 +34,10 @@ function App() {
           </Box>
         </Flex>
       </BrowserRouter >
+
+      <Box hideBelow="md" pos="absolute" bottom="4" left="4">
+        <ColorModeToggle />
+      </Box>
     </>
   );
 }

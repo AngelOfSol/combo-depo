@@ -51,7 +51,7 @@ function ComboInner({ combo }: { combo: Combo; }) {
             </Card.Description>
           </Card.Body>
           <Card.Footer flexDirection="column" alignItems="flex-start">
-            <CopyCombo expanded comboId={combo.id} />
+            <CopyCombo expanded combo={combo} />
           </Card.Footer>
         </Card.Root>
       </Box>
