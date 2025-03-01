@@ -1,6 +1,7 @@
 import { Badge, Box, Button, Card, Center, Clipboard, Flex, Link, Stat, Tag, Text, Tooltip } from "@chakra-ui/react";
 import { Combo } from "../App";
 import { LuCheck, LuChevronRight, LuClipboard } from "react-icons/lu";
+import GameStat from "./GameStat";
 
 type Props = { combo: Combo; };
 
@@ -17,20 +18,11 @@ function ComboCard({ combo }: Props) {
         <Box flex="2" >
           <Center>
             <Flex flexDirection="row" gap={4}>
-              <Stat.Root>
-                <Stat.Label>Damage</Stat.Label>
-                <Stat.ValueText>{combo.damage}</Stat.ValueText>
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Label>Meter</Stat.Label>
-                <Stat.ValueText>{(combo.meter / 100).toFixed(2)}</Stat.ValueText>
-              </Stat.Root>
-              <Stat.Root >
-                <Stat.Label>Grd</Stat.Label>
-                <Stat.ValueText alignItems="baseline">
-                  +2.75<Stat.ValueUnit>blocks</Stat.ValueUnit>
-                </Stat.ValueText>
-              </Stat.Root>
+
+
+              <GameStat value={combo.damage} variant="damage" />
+              <GameStat value={combo.meter} variant="meter" />
+              <GameStat value={1.5} variant="grd" />
 
             </Flex>
           </Center>
