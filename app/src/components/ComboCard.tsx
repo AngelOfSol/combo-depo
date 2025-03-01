@@ -1,10 +1,12 @@
-import { Box, Card, Center, Flex, Link, Tag, Text } from "@chakra-ui/react";
+import { Box, Button, Card, Center, Clipboard, Flex, Link, Tag, Text, Tooltip } from "@chakra-ui/react";
 import { Combo } from "../App";
-import { LuChevronRight } from "react-icons/lu";
+import { LuCheck, LuChevronRight, LuClipboard } from "react-icons/lu";
 
 type Props = { combo: Combo; };
 
 function ComboCard({ combo }: Props) {
+
+
 
   return <Card.Root width="100%">
     <Card.Body>
@@ -26,7 +28,31 @@ function ComboCard({ combo }: Props) {
           </Center>
         </Box>
         <Flex flex="1" justifyContent="flex-end">
-          <Link href={combo.video_link} target="_blank">Video <LuChevronRight /></Link>
+          <Box>
+            <Tooltip.Root openDelay={200} >
+              <Tooltip.Trigger>
+                <Clipboard.Root value={`${window.location.protocol}//${window.location.host}/combo/${combo.id}`}>
+                  <Clipboard.Control>
+                    <Clipboard.Trigger>
+                      <Clipboard.Indicator copied={<LuCheck size="24px" />}>
+                        <LuClipboard size="24px" />
+                      </Clipboard.Indicator>
+                    </Clipboard.Trigger>
+                  </Clipboard.Control>
+                </Clipboard.Root>
+              </Tooltip.Trigger>
+              <Tooltip.Positioner>
+                <Tooltip.Content>
+                  <Tooltip.Arrow>
+                    <Tooltip.ArrowTip />
+                  </Tooltip.Arrow>
+                  <Text>
+                    Copy a link to this combo!
+                  </Text>
+                </Tooltip.Content>
+              </Tooltip.Positioner>
+            </Tooltip.Root>
+          </Box>
         </Flex>
       </Flex>
 
