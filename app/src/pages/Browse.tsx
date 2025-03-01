@@ -17,7 +17,7 @@ function Browse() {
 
   return (
     <Center>
-      <VStack>
+      <VStack width="1000px">
         {comboList.map(combo =>
           <ComboCard combo={combo} key={combo.id}></ComboCard>
         )}
