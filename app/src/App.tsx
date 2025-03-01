@@ -3,6 +3,7 @@ import Browse from './pages/Browse';
 import ComboElement, { ColorModeToggle } from './pages/Combo';
 import Create from './pages/Create';
 import { Box } from '@chakra-ui/react';
+import AppHeader from './components/AppHeader';
 
 export type Combo = {
   combo: string,
@@ -18,10 +19,13 @@ function App() {
 
   return (
     <>
-      <Box hideBelow="md" pos="absolute" top="4" right="4">
+      <Box hideBelow="md" pos="absolute" bottom="4" right="4">
         <ColorModeToggle />
       </Box>
+
+
       <BrowserRouter>
+        <AppHeader></AppHeader>
         <Routes>
           <Route path="/" element={
             <Browse></Browse>

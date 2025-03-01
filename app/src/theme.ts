@@ -5,7 +5,7 @@ const config = defineConfig({
   globalCss: {
     html: {
       background: "{colors.page}",
-      colorPalette: "purple",
+      colorPalette: "pink",
     }
   },
   theme: {
