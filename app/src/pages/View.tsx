@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Box, Button, Card, Center, Checkbox, Flex, Heading, HStack, Link, Menu, Progress, RadioGroup, Tag, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Card, Center, Checkbox, Field, Flex, Heading, HStack, Link, Menu, Progress, RadioGroup, Tag, Text, VStack } from '@chakra-ui/react';
 import { Combo } from '../typedefs/combo';
 import GameStat from '../components/GameStat';
 import CopyCombo from '../components/CopyCombo';
@@ -8,16 +8,18 @@ import CopyCombo from '../components/CopyCombo';
 
 function ComboInner({ combo }: { combo: Combo; }) {
   return (
-    <Flex flexDirection={{ base: "row", lgDown: "column" }} pt="20vh" gap={10} padding={8} flexWrap="wrap">
+    <Flex flexDirection={{ base: "row", mdDown: "column" }} gap={10} padding={8} flexWrap="wrap">
       <Box flex={1} >
         <Card.Root >
           <Card.Body>
             <Card.Title>
               Game Information
             </Card.Title>
-            <GameStat size='lg' value={combo.damage} variant='damage' />
-            <GameStat size='lg' value={combo.meter} variant='meter' />
-            <GameStat size='lg' value={combo.grd} variant='grd' />
+            <Flex flexDirection="column">
+              <GameStat size='lg' value={combo.damage} variant='damage' />
+              <GameStat size='lg' value={combo.meter} variant='meter' />
+              <GameStat size='lg' value={combo.grd} variant='grd' />
+            </Flex>
           </Card.Body>
           <Card.Footer flexDirection="column" alignItems="flex-start">
             <Heading>Tags</Heading>
@@ -34,7 +36,6 @@ function ComboInner({ combo }: { combo: Combo; }) {
           <Card.Body>
             <Card.Title>Annotations</Card.Title>
             <Card.Description>
-              {combo.description}
             </Card.Description>
           </Card.Body>
         </Card.Root>
@@ -46,9 +47,10 @@ function ComboInner({ combo }: { combo: Combo; }) {
             <Card.Title>
               Metadata
             </Card.Title>
-            <Card.Description>
-              <Link textStyle="2xl" href={combo.video_link}>Video</Link>
+            <Card.Description >
+              {combo.description}
             </Card.Description>
+            <Link textStyle="1xl" href={combo.video_link}>Link to Video Reproduction</Link>
           </Card.Body>
           <Card.Footer flexDirection="column" alignItems="flex-start">
             <CopyCombo expanded combo={combo} />

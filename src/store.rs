@@ -57,21 +57,18 @@ pub fn start() -> StoreHandle {
                 id: 1,
                 grd: -125,
                 description: "Nothing to say".to_string(),
-            },
-        ];
-        for i in 2..20 {
-            data.push(Combo {
+            },Combo {
                 combo: "5B > 5C > 623A > 3B^1 > ic.jC > j.2C > 22A > 5CC > 623A > 66C(3) > B Pin"
                     .to_string(),
                 damage: 3324,
                 meter: 8217,
                 position: Position::Midscreen,
                 video_link: "https://www.youtube.com/watch?v=upM0bNNvUWU".to_string(),
-                id: i,
+                id: 2,
                 grd: 0,
                 description: "^1 You need to start holding your B Pin as soon as you press 3B otherwise you will not be able to get level 4 B Pin.  This is a huge damage boost.".to_string(),
-            });
-        }
+            }
+        ];
 
         while let Some(message) = rx.recv().await {
             match message {
