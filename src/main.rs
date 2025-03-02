@@ -10,32 +10,8 @@ use axum::{
     routing::get,
 };
 use handlebars::Handlebars;
-use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tower_http::services::ServeDir;
-use ts_rs::TS;
-
-#[derive(Serialize, Deserialize, Copy, Clone, TS)]
-#[ts(export)]
-pub enum Position {
-    Midscreen,
-    CloseCorner,
-    BackToCorner,
-    Anywhere,
-}
-
-#[derive(Serialize, Deserialize, Clone, TS)]
-#[ts(export)]
-pub struct Combo {
-    combo: String,
-    damage: i32,
-    meter: i32,
-    position: Position,
-    video_link: String,
-    id: u32,
-    grd: i32,
-    description: String,
-}
 
 #[tokio::main]
 async fn main() {
@@ -141,22 +117,4 @@ async fn main() {
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-// basic handler that responds with a static string
-async fn root() -> Html<&'static str> {
-    Html(
-        r#"<html prefix="og: https://ogp.me/ns#">
-        <head>
-        <title>The Rock (1996)</title>
-        <meta property="og:title" content="The Rock" />
-        <meta property="og:type" content="video.movie" />
-        <meta property="og:url" content="https://www.imdb.com/title/tt0117500/" />
-        <meta property="og:image" content="https://ia.media-imdb.com/images/rock.jpg" />
-
-        </head>
-        <body> <h1>NEW PAAGE</h1></body>
-        </html>
-    "#,
-    )
 }

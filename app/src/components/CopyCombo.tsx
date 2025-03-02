@@ -1,12 +1,12 @@
-import { Box, Button, Clipboard, Flex, HStack, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Button, Clipboard, Flex, Text, Tooltip } from "@chakra-ui/react";
 import { LuCheck, LuClipboard, LuLink } from "react-icons/lu";
-import { Combo } from "../typedefs/combo";
+import { ComboWithId } from "../__generated__/ComboWithId";
 
-type Props = { combo: Combo; expanded?: boolean; };
+type Props = { row: ComboWithId; expanded?: boolean; };
 
 
-function CopyCombo({ combo, expanded }: Props) {
-  const url = `${window.location.protocol}//${window.location.host}/combo/${combo.id}`;
+function CopyCombo({ row, expanded }: Props) {
+  const url = `${window.location.protocol}//${window.location.host}/combo/${row.id}`;
 
   if (expanded) {
     return (
@@ -26,7 +26,7 @@ function CopyCombo({ combo, expanded }: Props) {
           </Clipboard.Control>
         </Clipboard.Root>
 
-        <Clipboard.Root value={url}>
+        <Clipboard.Root value={row.combo.combo}>
           <Clipboard.Control>
             <Clipboard.Trigger asChild>
               <Button>
@@ -73,7 +73,7 @@ function CopyCombo({ combo, expanded }: Props) {
         <Box >
           <Tooltip.Root openDelay={200} >
             <Tooltip.Trigger>
-              <Clipboard.Root value={combo.combo}>
+              <Clipboard.Root value={row.combo.combo}>
                 <Clipboard.Control>
                   <Clipboard.Trigger asChild>
                     <Clipboard.Indicator copied={<LuCheck size="24px" />}>

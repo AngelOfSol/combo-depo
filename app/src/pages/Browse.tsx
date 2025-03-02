@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Center, VStack } from '@chakra-ui/react';
 import ComboCard from '../components/ComboCard';
-import { Combo } from '../typedefs/combo';
+import { ComboWithId } from '../__generated__/ComboWithId';
 
 
 
 function Browse() {
-  const [comboList, setComboList] = useState<Combo[]>([]);
+  const [comboList, setComboList] = useState<ComboWithId[]>([]);
 
   useEffect(() => {
     if ((window as any).comboList) {
@@ -19,7 +19,7 @@ function Browse() {
     <Center padding="10px">
       <VStack width="1000px">
         {comboList.map(combo =>
-          <ComboCard combo={combo} key={combo.id}></ComboCard>
+          <ComboCard row={combo} key={combo.id}></ComboCard>
         )}
       </VStack>
     </Center>

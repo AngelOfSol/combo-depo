@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Position } from '../typedefs/combo';
-import { Button, Card, Checkbox, Field, Fieldset, Flex, Input, NumberInput, Select, Textarea } from '@chakra-ui/react';
+import { Button, Card, Checkbox, Field, Fieldset, Flex, Input, NumberInput, Textarea } from '@chakra-ui/react';
+import { Position } from '../__generated__/Position';
 
 type EditableCombo = {
   combo: string,

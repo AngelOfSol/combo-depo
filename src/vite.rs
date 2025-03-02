@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use handlebars::Handlebars;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::json;
 
 const DEVELOPMENT: &str = r#"
@@ -41,10 +41,6 @@ struct ManifestEntry {
     assets: Vec<String>,
     #[serde(default)]
     imports: Vec<String>,
-}
-
-fn format_stylesheet(target: &String) -> String {
-    format!(r#"<link rel="stylesheet" href="{}" />"#, target)
 }
 
 pub fn vite_head_block(reg: &Handlebars) -> String {

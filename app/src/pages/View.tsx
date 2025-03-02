@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Box, Button, Card, Center, Checkbox, Field, Flex, Heading, HStack, Link, Menu, Progress, RadioGroup, Tag, Text, VStack } from '@chakra-ui/react';
-import { Combo } from '../typedefs/combo';
+import { Box, Card, Flex, Heading, Link, Tag, Text, VStack } from '@chakra-ui/react';
 import GameStat from '../components/GameStat';
 import CopyCombo from '../components/CopyCombo';
+import { ComboWithId } from '../__generated__/ComboWithId';
 
 
-function ComboInner({ combo }: { combo: Combo; }) {
+function ComboInner({ row }: { row: ComboWithId; }) {
+  const combo = row.combo;
   return (
     <Flex flexDirection={{ base: "row", mdDown: "column" }} gap={10} padding={8} flexWrap="wrap">
       <Box flex={1} >
@@ -53,7 +54,7 @@ function ComboInner({ combo }: { combo: Combo; }) {
             <Link textStyle="1xl" href={combo.video_link}>Link to Video Reproduction</Link>
           </Card.Body>
           <Card.Footer flexDirection="column" alignItems="flex-start">
-            <CopyCombo expanded combo={combo} />
+            <CopyCombo expanded row={row} />
           </Card.Footer>
         </Card.Root>
       </Box>
@@ -63,7 +64,7 @@ function ComboInner({ combo }: { combo: Combo; }) {
 
 
 function ComboPage() {
-  const [combo, setCombo] = useState<Combo | null>(null);
+  const [combo, setCombo] = useState<ComboWithId | null>(null);
   const id_param = useParams().id;
 
   useEffect(() => {
@@ -77,7 +78,7 @@ function ComboPage() {
 
   return (
     <>
-      {combo && <ComboInner combo={combo} />}
+      {combo && <ComboInner row={combo} />}
     </>
   );
 }

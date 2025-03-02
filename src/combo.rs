@@ -1,21 +1,30 @@
-use std::collections::BTreeSet;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
+#[derive(Serialize, Deserialize, Copy, Clone, TS)]
+#[ts(export)]
+pub enum Position {
+    Midscreen,
+    CloseCorner,
+    BackToCorner,
+    Anywhere,
+}
+
+#[derive(Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 pub struct Combo {
-    metadata: Metadata,
-    moveList: Vec<Move>,
-    annotations: Vec<(usize, Annotation)>,
+    pub combo: String,
+    pub damage: i32,
+    pub meter: i32,
+    pub position: Position,
+    pub video_link: String,
+    pub grd: i32,
+    pub description: String,
 }
 
-pub struct Annotation {}
-pub struct Metadata {}
-
-pub enum Move {
-    Standard {
-        motion: Motion,
-        buttons: BTreeSet<Button>,
-    },
+#[derive(Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
+pub struct ComboWithId {
+    pub id: usize,
+    pub combo: Combo,
 }
-
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
-pub struct Button(pub String);
-pub struct Motion(pub String);

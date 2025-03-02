@@ -1,13 +1,13 @@
-import { Box, Card, Center, Clipboard, Flex, Link, Tag, Text, Tooltip } from "@chakra-ui/react";
-import { LuCheck, LuChevronRight, LuClipboard } from "react-icons/lu";
+import { Box, Card, Center, Flex, Link, Tag } from "@chakra-ui/react";
+import { LuChevronRight } from "react-icons/lu";
 import GameStat from "./GameStat";
-import { Combo } from "../typedefs/combo";
 import CopyCombo from "./CopyCombo";
+import { ComboWithId } from "../__generated__/ComboWithId";
 
-type Props = { combo: Combo; };
+type Props = { row: ComboWithId; };
 
-function ComboCard({ combo }: Props) {
-
+function ComboCard({ row }: Props) {
+  const combo = row.combo;
 
 
   return <Card.Root width="100%">
@@ -30,12 +30,12 @@ function ComboCard({ combo }: Props) {
         </Box>
         <Box flex="3">
           <Center>
-            <Link href={`/combo/${combo.id}`}>{combo.combo}</Link>
+            <Link href={`/combo/${row.id}`}>{combo.combo}</Link>
           </Center>
         </Box>
         <Flex flex="1" justifyContent="flex-end" gap={4}>
-          <CopyCombo combo={combo} />
-          <Link unstyled href={`/combo/${combo.id}`}><LuChevronRight size="24px" /></Link>
+          <CopyCombo row={row} />
+          <Link unstyled href={`/combo/${row.id}`}><LuChevronRight size="24px" /></Link>
         </Flex>
       </Flex>
 
