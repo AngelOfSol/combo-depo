@@ -20,20 +20,19 @@ Display the combo text and the meta data
 
 
 ## run dev
-
+```
 cargo test (this generates the typescript definitions for the rust types)
-
 cd ./app && npm run dev
-
 cd .. && cargo run
+```
 
 ## run prod
 
+```
 cargo test (this generates the typescript definitions for the rust types)
-
 cd ./app && npm run build
-
 cd .. && cargo run --release
+```
 
 ## TODO
 
@@ -42,9 +41,24 @@ cd .. && cargo run --release
 - [x] create actual react pages for each element
 - [x] hook up router so I don't need to create separate entry points for each page
 - [ ] allow combo submission
-- [ ] add navigation menu to the side
+    - [x] create a combo submission page
+    - [ ] create a combo submission end point
+    - [ ] hook frontend up to backend 
+- [x] add navigation menu to the side
 - [ ] make it responsive
-- [ ] Make combo view page prettier
-    - [ ] Sidebox with metadata
-    - [ ] combo notation above embedded youtube
+- [ ] expanded combo data model
+    - [ ] tags
+        - [ ] positional tags
+        - [ ] ch/non ch AA/non AA tags
+    - [ ] rich combo syntax
+        - [ ] separate object for each move
+        - [ ] separate data vs rendered text
+        - [ ] parsing for quick fill
+    - [ ] metadata
+        - [x] video link
+        - [x] description
+        - [ ] uploader
+- [x] Make combo view page prettier
+    - [x] Sidebox with metadata
+    - [x] combo notation
     - [ ] centralized box with embedded youtube
