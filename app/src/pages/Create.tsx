@@ -11,6 +11,15 @@ type EditableCombo = {
   meter?: number,
   position?: Position,
 };
+type EditableComboKeys = (keyof EditableCombo);
+
+const hasDefined = <T, K extends keyof T>(argument: T | Defined<T, K>, keys: K[]): argument is Defined<T, K> =>
+  keys.every(key => argument[key] != null);
+
+type Defined<T, K extends keyof T = keyof T> = {
+  [P in K]-?: Exclude<T[P], undefined | null>
+};
+
 
 function Create() {
   const [combo, setCombo] = useState<EditableCombo>({
@@ -29,7 +38,7 @@ function Create() {
 
 
   const setGrd = (grd: number | undefined) => {
-    setCombo({ ...combo, meter: grd ? grd * 100 : undefined });
+    setCombo({ ...combo, grd: grd ? grd * 100 : undefined });
   };
 
   const setNotation = (notation: string) => {
@@ -49,7 +58,17 @@ function Create() {
   };
 
 
-  console.log(combo);
+  const submitCombo = () => {
+    const testProps: EditableComboKeys[] = ["damage", "grd", "meter", "position", "video_link"];
+    if (hasDefined(combo, testProps)) {
+    } else {
+      setCheckInvalid(true);
+
+    }
+  };
+
+  const [checkInvalid, setCheckInvalid] = useState<boolean>(false);
+
 
 
   useEffect(() => {
@@ -73,6 +92,7 @@ function Create() {
             <NumberInput.Root
               min={0}
               max={13000}
+              invalid={checkInvalid && !combo.damage}
               formatOptions={{ maximumFractionDigits: 0, useGrouping: false }}
               defaultValue={combo.damage?.toString()}
               onValueChange={(details) => {
@@ -95,6 +115,7 @@ function Create() {
             <NumberInput.Root
               min={-200}
               max={200}
+              invalid={checkInvalid && !combo.meter}
               formatOptions={{ maximumFractionDigits: 2, useGrouping: false }}
               defaultValue={combo.meter ? (combo.meter / 100).toString() : ''}
               onValueChange={(details) => {
@@ -121,6 +142,7 @@ function Create() {
               min={-12}
               max={12}
               step={0.25}
+              invalid={checkInvalid && !combo.grd}
               formatOptions={{ maximumFractionDigits: 2, useGrouping: false, }}
               defaultValue={combo.grd ? (combo.grd / 100).toString() : ''}
               onValueChange={(details) => {
@@ -142,12 +164,16 @@ function Create() {
             </NumberInput.Root>
             <Field.HelperText>Measured in GRD blocks.</Field.HelperText>
           </Field.Root>
-          <Fieldset.Root >
+          <Fieldset.Root
+            invalid={checkInvalid && !combo.position}
+          >
+
             <Fieldset.Legend>Position</Fieldset.Legend>
             {
               positions.map(position =>
                 <Checkbox.Root
                   key={position}
+                  invalid={checkInvalid && !combo.position}
                   checked={combo.position === position}
                   onCheckedChange={(_) => setPosition(position)}
                 >
@@ -199,12 +225,12 @@ function Create() {
           </Field.Root>
         </Card.Body>
         <Card.Footer flexDirection="column" alignItems="flex-end">
-          <Button>Submit</Button>
+          <Button onClick={(_) => submitCombo()}>Submit</Button>
         </Card.Footer>
       </Card.Root>
 
     </Flex >
   );
-}
+};
 
 export default Create;
