@@ -6,8 +6,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://broken.link" />
     <meta property="og:description" content="Browse combos for Under Night In Birth!" />
-    <script type="module">
-        window.comboList = {{{ rawJson }}};
+    <script id="server-data" type="application/json">
+        {{{ rawJson }}}
+    </script>
+    <script>
+        window.comboList = JSON.parse(document.getElementById("server-data").text);
     </script>
     {{{htmlHeader}}}
 </head>

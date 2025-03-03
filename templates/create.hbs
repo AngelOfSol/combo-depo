@@ -6,8 +6,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://broken.link" />
     <meta property="og:description" content="Creating a combo." />
-    <script type="module">
-        window.combo = {{ { rawJson } }};
+    <script id="server-data" type="application/json">
+        {{{ rawJson }}}
+    </script>
+    <script>
+        window.combo = JSON.parse(document.getElementById("server-data").text);
     </script>
     {{{htmlHeader}}}
 </head>
