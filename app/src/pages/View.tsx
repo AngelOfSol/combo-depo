@@ -10,8 +10,8 @@ function ComboInner({ row }: { row: ComboWithId; }) {
   const combo = row.combo;
   return (
     <Flex flexDirection={{ base: "row", mdDown: "column" }} gap={10} padding={8} flexWrap="wrap">
-      <Box flex={1} >
-        <Card.Root >
+      <Box flex={1}>
+        <Card.Root>
           <Card.Body>
             <Card.Title>
               Game Information

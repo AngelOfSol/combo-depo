@@ -57,13 +57,11 @@ function Create() {
     setCombo({ ...combo, position: pos });
   };
 
-
   const submitCombo = () => {
     const testProps: EditableComboKeys[] = ["damage", "grd", "meter", "position", "video_link"];
     if (hasDefined(combo, testProps)) {
     } else {
       setCheckInvalid(true);
-
     }
   };
 
@@ -164,9 +162,7 @@ function Create() {
             </NumberInput.Root>
             <Field.HelperText>Measured in GRD blocks.</Field.HelperText>
           </Field.Root>
-          <Fieldset.Root
-            invalid={checkInvalid && !combo.position}
-          >
+          <Fieldset.Root invalid={checkInvalid && !combo.position}>
 
             <Fieldset.Legend>Position</Fieldset.Legend>
             {
@@ -213,14 +209,15 @@ function Create() {
               }} />
             <Field.HelperText></Field.HelperText>
           </Field.Root>
-          <Field.Root>
-            <Field.Label>Video Link</Field.Label>
-            <Input placeholder='https://www.youtube.com/...' value={combo.video_link ||
-
-              ''
-            } onChange={(e) => {
-              setVideoLink(e.target.value);
-            }} />
+          <Field.Root required invalid={checkInvalid && !combo.video_link}>
+            <Field.Label>Video Link <Field.RequiredIndicator /> </Field.Label>
+            <Input
+              placeholder='https://www.youtube.com/...'
+              value={combo.video_link || ''}
+              onChange={(e) => {
+                setVideoLink(e.target.value);
+              }}
+            />
             <Field.HelperText>Please provide a video whenever possible.</Field.HelperText>
           </Field.Root>
         </Card.Body>
