@@ -1,17 +1,26 @@
 pub mod combo;
+pub mod response;
 pub mod store;
 pub mod vite;
 
+use crate::{combo::Combo, response::SubmittedCombo, store::StoreHandle};
 use axum::{
-    Router,
-    extract::Path,
+    Json, Router,
+    extract::{Path, State},
     http::StatusCode,
-    response::{Html, IntoResponse},
-    routing::get,
+    response::{Html, IntoResponse, Response},
+    routing::{get, post},
 };
 use handlebars::Handlebars;
 use serde_json::json;
 use tower_http::services::ServeDir;
+
+#[derive(Clone)]
+struct HandlerState<'a> {
+    reg: Handlebars<'a>,
+    header: String,
+    store: StoreHandle,
+}
 
 #[tokio::main]
 async fn main() {
@@ -21,8 +30,6 @@ async fn main() {
     let mut reg = Handlebars::new();
     #[cfg(debug_assertions)]
     reg.set_dev_mode(true);
-
-    let html_header = vite::vite_head_block(&reg);
 
     reg.register_template_file(
         "home",
@@ -39,82 +46,86 @@ async fn main() {
         r"C:\Programming\Projects\combo_repo\templates\combo.hbs",
     )
     .unwrap();
-    let reg = reg;
 
-    let store = store::start();
-
-    let home_route = {
-        let reg = reg.clone();
-        let store = store.clone();
-        let html_header = html_header.clone();
-        get(async move || {
-            let list = store.get_all().await;
-
-            let result = reg
-                .render(
-                    "home",
-                    &json!({
-                        "rawJson": serde_json::to_string_pretty(&list).unwrap(),
-                        "htmlHeader": html_header,
-                    }),
-                )
-                .unwrap();
-            Html(result)
-        })
-    };
-
-    let combo_route = {
-        let reg = reg.clone();
-        let store = store.clone();
-        let html_header = html_header.clone();
-
-        get(async move |Path(combo_id)| {
-            let item = store.get(combo_id).await;
-            if let Some(item) = item {
-                let result = reg
-                    .render(
-                        "combo",
-                        &json!({
-                            "rawJson": serde_json::to_string_pretty(&item).unwrap(),
-                            "htmlHeader": html_header,
-                        }),
-                    )
-                    .unwrap();
-                Html(result).into_response()
-            } else {
-                StatusCode::NOT_FOUND.into_response()
-            }
-        })
-    };
-
-    let create_route = {
-        let reg = reg.clone();
-        let html_header = html_header.clone();
-        get(async move || {
-            let result = reg
-                .render(
-                    "create",
-                    &json!({
-                        "rawJson": "null",
-                        "htmlHeader": html_header,
-                    }),
-                )
-                .unwrap();
-            Html(result)
-        })
+    let state = HandlerState {
+        header: vite::vite_head_block(&reg),
+        store: store::start(),
+        reg,
     };
 
     let serve_dir = ServeDir::new("app/dist");
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
-        .route("/", home_route.clone())
-        .route("/alternative", home_route)
-        .route("/create", create_route)
-        .route("/combo/{key}", combo_route)
-        .fallback_service(serve_dir);
+        .route("/", get(home))
+        .route("/alternative", get(home))
+        .route("/create", get(create))
+        .route("/combo/{key}", get(combo))
+        .route("/api/create", post(create_combo))
+        .fallback_service(serve_dir)
+        .with_state(state);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn create_combo(
+    State(state): State<HandlerState<'_>>,
+    Json(combo): Json<Combo>,
+) -> Json<SubmittedCombo> {
+    println!("{:?}", &combo);
+    let result = state.store.add(combo).await;
+    Json(SubmittedCombo {
+        redirect_id: result.unwrap(),
+    })
+}
+
+async fn home(State(state): State<HandlerState<'_>>) -> Html<String> {
+    let list = state.store.get_all().await;
+
+    let result = state
+        .reg
+        .render(
+            "home",
+            &json!({
+                "rawJson": serde_json::to_string_pretty(&list).unwrap(),
+                "htmlHeader": state.header,
+            }),
+        )
+        .unwrap();
+    Html(result)
+}
+
+async fn combo(State(state): State<HandlerState<'_>>, Path(combo_id): Path<usize>) -> Response {
+    let item = state.store.get(combo_id).await;
+    if let Some(item) = item {
+        let result = state
+            .reg
+            .render(
+                "combo",
+                &json!({
+                    "rawJson": serde_json::to_string_pretty(&item).unwrap(),
+                    "htmlHeader": state.header,
+                }),
+            )
+            .unwrap();
+        Html(result).into_response()
+    } else {
+        StatusCode::NOT_FOUND.into_response()
+    }
+}
+
+async fn create(State(state): State<HandlerState<'_>>) -> Html<String> {
+    let result = state
+        .reg
+        .render(
+            "create",
+            &json!({
+                "rawJson": "null",
+                "htmlHeader": state.header,
+            }),
+        )
+        .unwrap();
+    Html(result)
 }

@@ -40,10 +40,10 @@ cd .. && cargo run --release
 - [ ] create a how-to for running both dev and prod
 - [x] create actual react pages for each element
 - [x] hook up router so I don't need to create separate entry points for each page
-- [ ] allow combo submission
+- [x] allow combo submission
     - [x] create a combo submission page
-    - [ ] create a combo submission end point
-    - [ ] hook frontend up to backend 
+    - [x] create a combo submission end point
+    - [x] hook frontend up to backend 
 - [x] add navigation menu to the side
 - [ ] make it responsive
 - [ ] expanded combo data model
@@ -62,3 +62,8 @@ cd .. && cargo run --release
     - [x] Sidebox with metadata
     - [x] combo notation
     - [ ] centralized box with embedded youtube
+- [ ] work on XSS issues
+    - [ ] move window.{dataName} = JSON.parse lines into each react page
+    - [ ] disable inline scripts
+    - [ ] disable loading scripts from other domains
+    - [ ] read this https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP

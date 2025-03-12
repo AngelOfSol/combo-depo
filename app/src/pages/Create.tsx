@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Checkbox, Field, Fieldset, Flex, Input, NumberInput, Textarea } from '@chakra-ui/react';
 import { Position } from '../__generated__/Position';
+import { useMutation } from '@tanstack/react-query';
+import { Combo } from '../__generated__/Combo';
+import { SubmittedCombo } from '../__generated__/SubmittedCombo';
 
 type EditableCombo = {
   combo: string,
@@ -20,8 +23,26 @@ type Defined<T, K extends keyof T = keyof T> = {
   [P in K]-?: Exclude<T[P], undefined | null>
 };
 
+function useCreateCombo() {
+  return useMutation({
+    mutationFn: (combo: Combo) => {
+      return fetch("/api/create", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body:
+          "invalid" + JSON.stringify(combo) + "invalid json",
+      }).then(response => response.json())
+        .then(value => value as SubmittedCombo);
+    }
+  });
+}
+
 
 function Create() {
+  const { mutate, data } = useCreateCombo();
   const [combo, setCombo] = useState<EditableCombo>({
     combo: "",
     description: "",
@@ -60,6 +81,7 @@ function Create() {
   const submitCombo = () => {
     const testProps: EditableComboKeys[] = ["damage", "grd", "meter", "position", "video_link"];
     if (hasDefined(combo, testProps)) {
+      mutate(combo);
     } else {
       setCheckInvalid(true);
     }
@@ -67,7 +89,11 @@ function Create() {
 
   const [checkInvalid, setCheckInvalid] = useState<boolean>(false);
 
+  const validVideoLink = combo.video_link ? !!URL.parse(combo.video_link) : false;
 
+  if (data) {
+    console.log(data);
+  }
 
   useEffect(() => {
     if ((window as any).combo) {
@@ -209,8 +235,9 @@ function Create() {
               }} />
             <Field.HelperText></Field.HelperText>
           </Field.Root>
-          <Field.Root required invalid={checkInvalid && !combo.video_link}>
+          <Field.Root required invalid={checkInvalid && !validVideoLink}>
             <Field.Label>Video Link <Field.RequiredIndicator /> </Field.Label>
+            <Field.ErrorText>Invalid URL</Field.ErrorText>
             <Input
               placeholder='https://www.youtube.com/...'
               value={combo.video_link || ''}

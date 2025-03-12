@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, Copy, Clone, TS)]
+#[derive(Serialize, Deserialize, Copy, Clone, TS, Debug)]
 #[ts(export)]
 pub enum Position {
     Midscreen,
@@ -10,7 +10,7 @@ pub enum Position {
     Anywhere,
 }
 
-#[derive(Serialize, Deserialize, Clone, TS)]
+#[derive(Serialize, Deserialize, Clone, TS, Debug)]
 #[ts(export)]
 pub struct Combo {
     pub combo: String,
